@@ -8,9 +8,10 @@
 
         checkForHeightChanges() {
             const recordedHeights = this.get("recordedHeights") || {};
-            this.element.querySelectorAll("article").forEach((post) => {
-                const postId = post.id;
-                const postLink = `${window.location.protocol}//${window.location.hostname}/t/${this.get('posts.posts.firstObject.topic.id')}/${postId.split('_')[1]}`;
+            this.element.querySelectorAll("[data-post-id]").forEach((post) => {
+                const postId = post.dataset.postId;
+                const topicId = this.get('posts.posts.firstObject.topic.id');
+                const postLink = `${window.location.protocol}//${window.location.hostname}/t/${topicId}/${postId}`;
                 const renderedHeight = post.getBoundingClientRect().height;
                 const oldHeight = recordedHeights[postId];
                 if(oldHeight && renderedHeight !== oldHeight){
