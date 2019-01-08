@@ -9,7 +9,7 @@
         checkForHeightChanges() {
             const recordedHeights = this.get("recordedHeights") || {};
             this.element.querySelectorAll("[data-post-id]").forEach((post) => {
-                const postId = post.dataset.postId;
+                const postId = post.id.split('_')[1];
                 const topicId = this.get('posts.posts.firstObject.topic.id');
                 const postLink = `${window.location.protocol}//${window.location.hostname}/t/${topicId}/${postId}`;
                 const renderedHeight = post.getBoundingClientRect().height;
