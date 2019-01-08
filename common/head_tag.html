@@ -42,4 +42,8 @@
           Ember.run.cancel(nextTick);
         }
     });
+    
+    api.onPageChange(() => {
+        document.querySelector('body').classList.remove('suspicious-post-detected');
+    })
 </script>
