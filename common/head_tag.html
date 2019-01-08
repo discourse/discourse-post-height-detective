@@ -12,7 +12,7 @@
                 const postId = post.id.split('_')[1];
                 const topicId = this.get('posts.posts.firstObject.topic.id');
                 const postLink = `${window.location.protocol}//${window.location.hostname}/t/${topicId}/${postId}`;
-                const renderedHeight = post.getBoundingClientRect().height;
+                const renderedHeight = post.querySelector('.cooked').getBoundingClientRect().height;
                 const oldHeight = recordedHeights[postId];
                 if(oldHeight && renderedHeight !== oldHeight){
                     console.error(`🕵 ️Height of ${postLink} has changed after initial render. Was ${oldHeight}, now ${renderedHeight}`);
