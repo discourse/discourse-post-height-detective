@@ -1,0 +1,44 @@
+<script type="text/discourse-plugin" version="0.1">
+    api.modifyClass("component:scrolling-post-stream", {
+        afterRender(){
+            // Do this super quick whenever rerendering happens, 
+            // otherwise we might miss something
+            this.checkForHeightChanges();
+        },
+
+        checkForHeightChanges() {
+            const recordedHeights = this.get("recordedHeights") || {};
+            this.element.querySelectorAll("article").forEach((post) => {
+                const postId = post.id;
+                const postLink = `${window.location.protocol}//${window.location.hostname}/t/${this.get('posts.posts.firstObject.topic.id')}/${postId.split('_')[1]}`;
+                const renderedHeight = post.getBoundingClientRect().height;
+                const oldHeight = recordedHeights[postId];
+                if(oldHeight && renderedHeight !== oldHeight){
+                    console.error(`🕵 ️Height of ${postLink} has changed after initial render. Was ${oldHeight}, now ${renderedHeight}`);
+                    document.querySelector("body").classList.add("suspicious-post-detected");
+                }
+                recordedHeights[postId] = renderedHeight;
+                this.set('recordedHeights', recordedHeights);
+            })
+        },
+
+        tick: function() {
+          var nextTick = Ember.run.later(this, function() {
+            this.checkForHeightChanges();
+            this.tick();
+          }, 1000);
+          this.set('nextTick', nextTick);
+        },
+
+        didInsertElement: function() {
+          this._super();
+          this.tick();
+        },
+
+        willDestroyElement: function() {
+          this._super();
+          var nextTick = this.get('nextTick');
+          Ember.run.cancel(nextTick);
+        }
+    });
+</script>
