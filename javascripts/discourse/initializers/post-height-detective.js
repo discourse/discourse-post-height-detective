@@ -8,6 +8,8 @@ export default {
   initialize() {
     withPluginApi("1.1.0", (api) => {
       api.modifyClass("component:scrolling-post-stream", {
+        pluginId: "post-height-detective",
+
         afterRender() {
           // Do this super quick whenever rerendering happens,
           // otherwise we might miss something
