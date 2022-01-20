@@ -1,4 +1,5 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
+import { bind } from "discourse-common/utils/decorators";
 
 export default {
   name: "post-height-detective",
@@ -13,26 +14,9 @@ export default {
         },
 
         checkForHeightChanges() {
-          const recordedHeights = this.get("recordedHeights") || {};
-          this.element.querySelectorAll("[data-post-id]").forEach((post) => {
-            const postId = post.id.split("_")[1];
-            const topicId = this.get("posts.posts.firstObject.topic.id");
-            const postLink = `${window.location.protocol}//${window.location.hostname}/t/${topicId}/${postId}`;
-            const renderedHeight = post
-              .querySelector(".cooked")
-              .getBoundingClientRect().height;
-            const oldHeight = recordedHeights[postId];
-            if (oldHeight && renderedHeight !== oldHeight) {
-              console.error(
-                `🕵 Height of ${postLink} has changed after initial render. Was ${oldHeight}, now ${renderedHeight}`
-              );
-              document
-                .querySelector("body")
-                .classList.add("suspicious-post-detected");
-            }
-            recordedHeights[postId] = renderedHeight;
-            this.set("recordedHeights", recordedHeights);
-          });
+          this.element
+            .querySelectorAll("article[data-post-id]")
+            .forEach(this.trackHeight);
         },
 
         tick: function () {
@@ -56,6 +40,28 @@ export default {
           this._super();
           var nextTick = this.get("nextTick");
           Ember.run.cancel(nextTick);
+        },
+
+        @bind
+        trackHeight(post) {
+          const recordedHeights = this.get("recordedHeights") || {};
+          const postId = post.id.split("_")[1];
+          const topicId = this.get("posts.posts.firstObject.topic.id");
+          const postLink = `${window.location.protocol}//${window.location.hostname}/t/${topicId}/${postId}`;
+          const renderedHeight = post
+            .querySelector(".cooked")
+            .getBoundingClientRect().height;
+          const oldHeight = recordedHeights[postId];
+          if (oldHeight && renderedHeight !== oldHeight) {
+            console.error(
+              `🕵 Height of ${postLink} has changed after initial render. Was ${oldHeight}, now ${renderedHeight}`
+            );
+            document
+              .querySelector("body")
+              .classList.add("suspicious-post-detected");
+          }
+          recordedHeights[postId] = renderedHeight;
+          this.set("recordedHeights", recordedHeights);
         },
       });
 
