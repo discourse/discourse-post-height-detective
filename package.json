@@ -1,0 +1,10 @@
+{
+  "name": "discourse-post-height-detective",
+  "version": "0.0.1",
+  "repository": "https://github.com/discourse/discourse-post-height-detective",
+  "author": "Discourse",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "eslint-config-discourse": "^1.1.9"
+  }
+}
