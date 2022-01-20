@@ -1,10 +1,11 @@
 import { withPluginApi } from "discourse/lib/plugin-api";
 import { bind } from "discourse-common/utils/decorators";
+import { cancel, later } from "@ember/runloop";
 
 export default {
   name: "post-height-detective",
 
-  initialize(container) {
+  initialize() {
     withPluginApi("1.1.0", (api) => {
       api.modifyClass("component:scrolling-post-stream", {
         afterRender() {
@@ -19,10 +20,10 @@ export default {
             .forEach(this.trackHeight);
         },
 
-        tick: function () {
-          var nextTick = Ember.run.later(
+        tick() {
+          const nextTick = later(
             this,
-            function () {
+            () => {
               this.checkForHeightChanges();
               this.tick();
             },
@@ -31,20 +32,20 @@ export default {
           this.set("nextTick", nextTick);
         },
 
-        didInsertElement: function () {
-          this._super();
+        didInsertElement() {
+          this._super(...arguments);
           this.tick();
         },
 
-        willDestroyElement: function () {
-          this._super();
-          var nextTick = this.get("nextTick");
-          Ember.run.cancel(nextTick);
+        willDestroyElement() {
+          this._super(...arguments);
+          const nextTick = this.nextTick;
+          cancel(nextTick);
         },
 
         @bind
         trackHeight(post) {
-          const recordedHeights = this.get("recordedHeights") || {};
+          const recordedHeights = this.recordedHeights || {};
           const postId = post.id.split("_")[1];
           const topicId = this.get("posts.posts.firstObject.topic.id");
           const postLink = `${window.location.protocol}//${window.location.hostname}/t/${topicId}/${postId}`;
@@ -52,7 +53,9 @@ export default {
             .querySelector(".cooked")
             .getBoundingClientRect().height;
           const oldHeight = recordedHeights[postId];
+
           if (oldHeight && renderedHeight !== oldHeight) {
+            // eslint-disable-next-line no-console
             console.error(
               `🕵 Height of ${postLink} has changed after initial render. Was ${oldHeight}, now ${renderedHeight}`
             );
@@ -60,6 +63,7 @@ export default {
               .querySelector("body")
               .classList.add("suspicious-post-detected");
           }
+
           recordedHeights[postId] = renderedHeight;
           this.set("recordedHeights", recordedHeights);
         },
