@@ -45,6 +45,11 @@ export default {
           cancel(nextTick);
         },
 
+        _refresh() {
+          this._super(...arguments);
+          this.set("recordedHeights", {});
+        },
+
         @bind
         trackHeight(post) {
           const recordedHeights = this.recordedHeights || {};
