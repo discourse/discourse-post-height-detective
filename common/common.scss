@@ -1,7 +1,5 @@
-@import "common/foundation/variables";
-
 body.suspicious-post-detected {
   .d-header {
-    background-color: $danger-low;
+    background-color: var(--danger-low);
   }
 }
