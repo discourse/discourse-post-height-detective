@@ -34,16 +34,17 @@ export default {
         @bind
         resizeObserverCallback(resizeObserverEntries) {
           for (const entry of resizeObserverEntries) {
-            this.trackHeight(entry.target, entry.contentRect.height);
+            this.trackHeight(entry.target);
           }
         },
 
         @bind
-        trackHeight(post, renderedHeight) {
+        trackHeight(post) {
           const postNumber = post.id.split("_")[1];
           const topicId = this.get("posts.posts.firstObject.topic.id");
           const postLink = `${window.location.protocol}//${window.location.hostname}/t/${topicId}/${postNumber}`;
           const postElement = post.querySelector(".cooked");
+          const renderedHeight = postElement.getBoundingClientRect().height;
           const oldHeight = this.recordedHeights.get(post);
 
           if (oldHeight && renderedHeight !== oldHeight) {
