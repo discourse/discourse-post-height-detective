@@ -47,6 +47,11 @@ export default {
           const topicId = this.get("posts.posts.firstObject.topic.id");
           const postLink = `${window.location.protocol}//${window.location.hostname}/t/${topicId}/${postNumber}`;
           const postElement = post.querySelector(".cooked");
+
+          if (!postElement) {
+            return;
+          }
+
           const renderedHeight = postElement.getBoundingClientRect().height;
           const oldHeight = this.recordedHeights.get(post);
 
