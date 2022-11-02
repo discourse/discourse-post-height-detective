@@ -33,12 +33,15 @@ export default {
 
         @bind
         resizeObserverCallback(resizeObserverEntries) {
+          if (this.isDestroying || this.isDestroyed) {
+            return;
+          }
+
           for (const entry of resizeObserverEntries) {
             this.trackHeight(entry.target);
           }
         },
 
-        @bind
         trackHeight(post) {
           const postNumber = post.id.split("_")[1];
           const topicId = this.get("posts.posts.firstObject.topic.id");
