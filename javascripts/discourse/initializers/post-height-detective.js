@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 
+import { next } from "@ember/runloop";
 import { withPluginApi } from "discourse/lib/plugin-api";
 import { bind } from "discourse-common/utils/decorators";
-import { next } from "@ember/runloop";
 
 export default {
   name: "post-height-detective",
@@ -69,11 +69,7 @@ export default {
               );
             }
 
-            next(() =>
-              document
-                .querySelector("body")
-                .classList.add("suspicious-post-detected")
-            );
+            next(() => document.body.classList.add("suspicious-post-detected"));
           }
 
           this.recordedHeights.set(post, renderedHeight);
@@ -82,9 +78,7 @@ export default {
       });
 
       api.onPageChange(() => {
-        document
-          .querySelector("body")
-          .classList.remove("suspicious-post-detected");
+        document.body.classList.remove("suspicious-post-detected");
       });
     });
   },
