@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 
 import { next } from "@ember/runloop";
+import { bind } from "discourse/lib/decorators";
 import { withPluginApi } from "discourse/lib/plugin-api";
-import { bind } from "discourse-common/utils/decorators";
 
 export default {
   name: "post-height-detective",
