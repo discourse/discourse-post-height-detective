@@ -44,7 +44,7 @@ function trackHeight(post) {
   }
   const postNumber = post.id.split("_")[1];
   const topicId = post.closest("[data-topic-id]").dataset.topicId;
-  const postLink = `${window.location.protocol}//${window.location.hostname}/t/${topicId}/${postNumber}`;
+  const postLink = `${window.location.origin}/t/${topicId}/${postNumber}`;
   const postElement = post.querySelector(".cooked");
 
   if (!postElement) {
